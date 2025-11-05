@@ -22,7 +22,7 @@ new
 ```
 
 CREATE TABLE daily_activities (
-    id SERIAL PRIMARY KEY,
+    id BIGINT PRIMARY KEY,
     user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     date DATE NOT NULL,
     sleep_hours FLOAT,
