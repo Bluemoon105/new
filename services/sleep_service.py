@@ -59,7 +59,7 @@ def predict_fatigue(data: UserInput):
 
     # 컨디션 등급
     if fatigue_score < 25:
-        condition = "좋음😆"
+        condition = "좋음😆" 
     elif fatigue_score < 50:
         condition = "보통😑"
     elif fatigue_score < 75:
