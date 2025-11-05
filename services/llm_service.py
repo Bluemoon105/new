@@ -1,21 +1,23 @@
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+# from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from config import settings
-from services.db_service import get_user_info, get_daily_activity
+from services.user_service import get_user_info, get_daily_activity
 from services.mongo_service import save_chat, get_user_chats
+import google.generativeai as genai
 
-MODEL_NAME = settings.KANANA_MODEL
-TOKENIZER = AutoTokenizer.from_pretrained(MODEL_NAME, token=settings.HF_TOKEN)
-MODEL = AutoModelForCausalLM.from_pretrained(
-    MODEL_NAME,
-    torch_dtype="auto",
-    device_map="auto",
-    token=settings.HF_TOKEN,
-)
-generator = pipeline("text-generation", model=MODEL, tokenizer=TOKENIZER, device_map="auto")
+# MODEL_NAME = settings.KANANA_MODEL
+# TOKENIZER = AutoTokenizer.from_pretrained(MODEL_NAME, token=settings.HF_TOKEN)
+# MODEL = AutoModelForCausalLM.from_pretrained(
+#     MODEL_NAME,
+#     torch_dtype="auto",
+#     device_map="auto",
+#     token=settings.HF_TOKEN,
+# )
+# generator = pipeline("text-generation", model=MODEL, tokenizer=TOKENIZER, device_map="auto")
 
-# -------------------------
+genai.configure(api_key=settings.GOOGLE_API_KEY)
+model = genai.GenerativeModel("gemini-1.5-flash")
+
 # 유틸: 빈 값 제거
-# -------------------------
 def _fmt(label: str, value, unit: str = ""):
     if not value or value in ["N/A", "None", "비공개"]:
         return ""
@@ -47,36 +49,34 @@ def generate_sleep_feedback(req):
         _fmt("추천 수면 시간", activity.get("recommended_range")),
     ]))
 
-    # --------------------------------------
-    # 🚀 핵심: '예시 출력' '규칙' 등 제거하고, 답변 시작 지점 명확히 지정
-    # --------------------------------------
+    #핵심: '예시 출력' '규칙' 등 제거하고, 답변 시작 지점 명확히 지정
     prompt = f"""
-너는 따뜻하고 친절한 수면 코치야.
-데이터를 기반으로 간결하고 따뜻한 피드백을 줘.
+        너는 따뜻하고 친절한 수면 코치야.
+        데이터를 기반으로 간결하고 따뜻한 피드백을 줘.
 
-[사용자 정보]
-{user_info or '- 정보 없음'}
+        [사용자 정보]
+        {user_info or '- 정보 없음'}
 
-[최근 하루 데이터]
-{activity_info or '- 데이터 없음'}
+        [최근 하루 데이터]
+        {activity_info or '- 데이터 없음'}
 
-[최근 대화]
-{history_text}
+        [최근 대화]
+        {history_text}
 
-[사용자 질문]
-{req.message}
+        [사용자 질문]
+        {req.message}
 
----
+        ---
 
-다음 내용을 반드시 포함해서 자연스럽게 말해줘:
-1. 상태 요약 (현재 수면 상태 한 줄)
-2. 오늘의 컨디션 코멘트
-3. 실천 가능한 수면 개선 팁 2~3개 (불릿 형식)
-4. 마지막에 따뜻한 응원의 말
+        다음 내용을 반드시 포함해서 자연스럽게 말해줘:
+        1. 상태 요약 (현재 수면 상태 한 줄)
+        2. 오늘의 컨디션 코멘트
+        3. 실천 가능한 수면 개선 팁 2~3개 (불릿 형식)
+        4. 마지막에 따뜻한 응원의 말
 
-응답은 아래 형식을 참고하되, 예시는 출력하지 마.
-### 답변 시작:
-"""
+        응답은 아래 형식을 참고하되, 예시는 출력하지 마.
+        ### 답변 시작:
+        """
 
     result = generator(
         prompt,

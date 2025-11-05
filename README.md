@@ -20,3 +20,17 @@ new
    └─ user_service.py - 유저 정보 불러오기
 
 ```
+
+CREATE TABLE daily_activities (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    sleep_hours FLOAT,
+    caffeine_mg FLOAT,
+    alcohol_consumption FLOAT,
+    physical_activity_hours FLOAT,
+    predicted_sleep_quality FLOAT,
+    predicted_fatigue_score FLOAT,
+    recommended_sleep_range VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

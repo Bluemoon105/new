@@ -16,7 +16,7 @@ def chat_general(req: ChatRequest):
 @router.post("/sleep-feedback")
 def chat_sleep_feedback(req: SleepChatRequest):
     """수면 데이터 기반 피드백"""
-    # ✅ req 전체를 통째로 넘겨야 함
+    # req 전체를 통째로 넘겨야 함
     response = generate_sleep_feedback(req)
     save_chat(
         req.user_id,

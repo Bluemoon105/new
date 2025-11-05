@@ -23,10 +23,16 @@ def save_chat(user_id: int, user_message: str, bot_response: str, chat_type: str
     }
     chat_collection.insert_one(chat_doc)
 
-def get_user_chats(user_id: int, limit: int = 5):
+def get_user_chats(user_id: int, limit: int = 10):
     """특정 유저의 최근 대화 가져오기"""
-    return list(
-        chat_collection.find({"user_id": user_id})
-        .sort("timestamp", -1)
+    chats  = list (
+        chat_collection.find({"user_id":user_id})
+        .sort("created_at", -1)
         .limit(limit)
     )
+    
+    for chat in chats:
+        if "_id" in chat:
+            chat ["_id"] = str(chat["_id"])
+    
+    return chats

@@ -15,10 +15,11 @@ class Settings:
     MONGO_URL = os.getenv("MONGO_URL")
     MONGO_DB_NAME = os.getenv("MONGO_DB_NAME")
 
-    KANANA_MODEL = os.getenv("KANANA_MODEL")
+    GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+    # KANANA_MODEL = os.getenv("KANANA_MODEL")
     SECRET_KEY = os.getenv("SECRET_KEY")
 
     #Hugging Face Private Model 인증 토큰
-    HF_TOKEN = os.getenv("HF_TOKEN")
+    # HF_TOKEN = os.getenv("HF_TOKEN")
 
 settings = Settings()

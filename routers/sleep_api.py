@@ -11,7 +11,7 @@ router = APIRouter(prefix="/sleep", tags=["sleep"])
 async def predict_fatigue_endpoint(data: UserInput):
     return predict_fatigue(data)
 
-@router.post("/sleep/recommend")
+@router.post("/recommend")
 def recommend_rule_based(data: UserInput):
     df = pd.DataFrame([data.model_dump()])[columns]
     X_scaled = scaler.transform(df)
