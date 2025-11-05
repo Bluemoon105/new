@@ -1,8 +1,14 @@
 from pymongo import MongoClient
 from datetime import datetime
 from config import settings
+import certifi
 
-client = MongoClient(settings.MONGO_URL)
+client = MongoClient(
+    settings.MONGO_URL,
+    tls=True,
+    tlsCAFile=certifi.where(),
+    serverSelectionTimeoutMS=20000,
+    )
 db = client[settings.MONGO_DB_NAME]
 chat_collection = db["chat_history"]
 
