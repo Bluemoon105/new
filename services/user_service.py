@@ -60,3 +60,17 @@ def get_daily_activity(user_id: int):
         "alcohol_consumption": "N/A",
         "physical_activity_hours": "N/A",
     }
+    
+def get_weekly_activity(user_id: int):
+    with engine.connect() as conn:
+        result = conn.execute(
+            text("""
+                SELECT *
+                FROM daily_activities
+                WHERE user_id = :user_id
+                ORDER BY date DESC
+                LIMIT 7
+            """),
+            {"user_id": user_id}
+        ).mappings().all()
+        return result
