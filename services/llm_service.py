@@ -14,18 +14,6 @@ os.environ["LANGSMITH_ENDPOINT"] = "https://api.smith.langchain.com"
 os.environ["LANGSMITH_API_KEY"] = os.getenv("LANGSMITH_API_KEY")
 os.environ["LANGSMITH_PROJECT"] = os.getenv("LANGSMITH_PROJECT")
 
-
-
-# MODEL_NAME = settings.KANANA_MODEL
-# TOKENIZER = AutoTokenizer.from_pretrained(MODEL_NAME, token=settings.HF_TOKEN)
-# MODEL = AutoModelForCausalLM.from_pretrained(
-#     MODEL_NAME,
-#     torch_dtype="auto",
-#     device_map="auto",
-#     token=settings.HF_TOKEN,
-# )
-# generator = pipeline("text-generation", model=MODEL, tokenizer=TOKENIZER, device_map="auto")
-
 genai.configure(api_key=settings.GOOGLE_API_KEY)
 model = genai.GenerativeModel("gemini-2.5-flash")
 
