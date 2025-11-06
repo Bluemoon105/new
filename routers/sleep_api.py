@@ -9,6 +9,7 @@ router = APIRouter(prefix="/sleep", tags=["sleep"])
 
 @router.post("/predict-fatigue")
 async def predict_fatigue_endpoint(data: UserInput):
+    print("받은 데이터:", data.dict())
     return predict_fatigue(data)
 
 @router.post("/recommend")

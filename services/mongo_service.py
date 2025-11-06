@@ -1,4 +1,4 @@
-from pymongo import MongoClient
+from pymongo import MongoClient, DESCENDING, ASCENDING
 from datetime import datetime
 from config import settings
 import certifi
@@ -22,17 +22,26 @@ def save_chat(user_id: int, user_message: str, bot_response: str, chat_type: str
         "timestamp": datetime.utcnow(),
     }
     chat_collection.insert_one(chat_doc)
-
+    
 def get_user_chats(user_id: int, limit: int = 10):
-    """특정 유저의 최근 대화 가져오기"""
-    chats  = list (
-        chat_collection.find({"user_id":user_id})
-        .sort("created_at", -1)
+    """가장 최근 10개의 대화 가져오되, 오래된 → 최신 순으로 정렬"""
+    
+    # 최신순으로 limit개 가져오기
+    chats = list(
+        chat_collection.find({"user_id": user_id})
+        .sort("timestamp", DESCENDING)
         .limit(limit)
     )
-    
+
+    if not chats:
+        return []
+
+    #최신순으로 가져왔으니, 표시할 땐 반대로 (오래된 → 최신 순)
+    chats.reverse()
+
+    #ObjectId 문자열 변환
     for chat in chats:
         if "_id" in chat:
-            chat ["_id"] = str(chat["_id"])
-    
+            chat["_id"] = str(chat["_id"])
+
     return chats
